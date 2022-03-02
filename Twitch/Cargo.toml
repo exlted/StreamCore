@@ -1,0 +1,11 @@
+[package]
+name = "streamcore_twitch_chat_ingest"
+version = "0.1.0"
+authors = ["exlted <exltedofdrg@gmail.com>"]
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+twitch-irc = "3.0.1"
+tokio = { version = "1.17.0", features = ["full"] }
