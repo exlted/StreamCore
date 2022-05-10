@@ -17,6 +17,8 @@ type RMQResult<T> = StdResult<T, PoolError>;
 type Result<T> = StdResult<T, Error>;
 type Connection = deadpool::managed::Object<deadpool_lapin::Manager>;
 
+// #1 Debug sends (We shouldn't recieve our own messages, everybody should recieve the messages we send)
+
 #[derive(ThisError, Debug)]
 enum Error {
     #[error("rmq error: {0}")]
@@ -29,6 +31,14 @@ impl warp::reject::Reject for Error {}
 
 #[tokio::main]
 pub async fn main() {
+    let addr =
+        std::env::var("AMQP_ADDR").unwrap_or_else(|_| "amqp://guest:guest@127.0.0.1:5672/%2f".into());
+    let manager = Manager::new(addr, ConnectionProperties::default().with_tokio());
+    let pool: Pool = deadpool::managed::Pool::builder(manager)
+        .max_size(10)
+        .build()
+        .expect("can create pool");
+    let pool_clone = pool.clone();
     // default configuration is to join chat as anonymous.
     let config = ClientConfig::default();
     let (mut incoming_messages, client) =
@@ -49,6 +59,7 @@ pub async fn main() {
                 //    println!("name:{} version:{}", badge.name, badge.version);
                 //}
                 println!("(#{}) {}: {}", msg.channel_login, msg.sender.name, text);
+                send_rmq_msg(pool_clone.clone(), format!("(#{}) {}: {}", msg.channel_login, msg.sender.name, text)).await;
             },
             //ServerMessage::Whisper(msg) => {
             //    println!("(w) {}: {}", msg.sender.name, msg.message_text);
@@ -84,14 +95,6 @@ pub async fn main() {
 
     // join a channel
     client.join("exlted".to_owned());
-
-    let addr =
-        std::env::var("AMQP_ADDR").unwrap_or_else(|_| "amqp://rmq:rmq@127.0.0.1:5672/%2f".into());
-    let manager = Manager::new(addr, ConnectionProperties::default().with_tokio());
-    let pool: Pool = deadpool::managed::Pool::builder(manager)
-        .max_size(10)
-        .build()
-        .expect("can create pool");
 
     let health_route = warp::path!("health").and_then(health_handler);
     let add_msg_route = warp::path!("msg")
@@ -168,6 +171,26 @@ async fn rmq_listen(pool: Pool) -> Result<()> {
             Err(e) => eprintln!("rmq listen had an error: {}", e),
         };
     }
+}
+
+async fn send_rmq_msg(pool: Pool, message : String) -> Result<()> {
+    let rmq_con = get_rmq_con(pool).await.map_err(|e| {
+        eprintln!("could not get rmq con: {}", e);
+        e
+    })?;
+    let channel = rmq_con.create_channel().await?;
+    
+
+    channel.basic_publish(
+        "", 
+        "hello", 
+        BasicPublishOptions::default(),
+        message.into_bytes(),
+        BasicProperties::default()
+    )
+    .await?;
+    
+    Ok(())
 }
 
 async fn init_rmq_listen(pool: Pool) -> Result<()> {

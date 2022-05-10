@@ -16,3 +16,4 @@ dev_dependencies:
   test_process: ^2.0.0
   shelf_web_socket: ^1.0.1
   web_socket_channel: ^2.2.0
+  dart_amqp: ^0.2.1

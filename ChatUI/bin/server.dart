@@ -3,22 +3,33 @@
 // BSD-style license that can be found in the LICENSE file.
 // https://github.com/dart-lang/samples/blob/master/server/simple/bin/server.dart
 
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as shelf_io;
-import 'package:shelf_router/shelf_router.dart' as shelf_router;
 import 'package:shelf_static/shelf_static.dart' as shelf_static;
 import 'package:shelf_web_socket/shelf_web_socket.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
+import "package:dart_amqp/dart_amqp.dart";
 
-// #2. Connect chat system to RabbitMQ setup w/ Twitch Ingest
 // #3. Implement front-end customizability
 //      - User only define JS/CSS
 //      - Want interoperability w/ StreamElements and/or StreamLabs
 
-Future main() async {
+Future main(List<String> arguments) async {
+  RMQChatParticipant rabbitChat = RMQChatParticipant(nextParticipantID());
+  registerChatParticipant(rabbitChat);
+
+  Client client = Client();
+
+  Channel channel = await client
+      .channel(); // auto-connect to localhost:5672 using guest credentials
+  Queue queue = await channel.queue("hello");
+  Consumer consumer = await queue.consume();
+  consumer.listen((AmqpMessage message) {
+    sendChat(rabbitChat, message.payloadAsString);
+  });
+
   // If the "PORT" environment variable is set, listen to it. Otherwise, 8080.
   // https://cloud.google.com/run/docs/reference/container-contract#port
   final port = int.parse(Platform.environment['PORT'] ?? '8080');
@@ -28,9 +39,7 @@ Future main() async {
       // Handle upgrading all websocket requests
       .add(_websocket)
       // First, serve files from the 'public' directory
-      .add(_staticHandler)
-      // If a corresponding file is not found, send requests to a `Router`
-      .add(_router);
+      .add(_staticHandler);
 
   // See https://pub.dev/documentation/shelf/latest/shelf_io/serve.html
   final server = await shelf_io.serve(
@@ -50,26 +59,26 @@ Future main() async {
 final _staticHandler =
     shelf_static.createStaticHandler('public', defaultDocument: 'index.html');
 
-// Router instance to handler requests.
-final _router = shelf_router.Router()
-  ..get('/helloworld', _helloWorldHandler)
-  ..get(
-    '/time',
-    (request) => Response.ok(DateTime.now().toUtc().toIso8601String()),
-  )
-  ..get('/sum/<a|[0-9]+>/<b|[0-9]+>', _sumHandler);
-
 class ChatParticipant {
-  WebSocketChannel socket;
+  WebSocketChannel? socket;
   int id;
 
-  ChatParticipant(WebSocketChannel _socket, int _id)
+  ChatParticipant(WebSocketChannel? _socket, int _id)
       : socket = _socket,
         id = _id {}
+
+  void sendMessage(message) {
+    socket?.sink.add("$message");
+  }
 }
 
-// function when ChatParticipants disconnect to remove them from the active list
-// function to get called when ChatParticipants send a message
+class RMQChatParticipant extends ChatParticipant {
+  RMQChatParticipant(int _id) : super(null, _id) {}
+
+  void sendMessage(message) {
+    print(message);
+  }
+}
 
 int _lastParticipantID = 0;
 int nextParticipantID() {
@@ -88,7 +97,7 @@ void removeChatParticipant(ChatParticipant leavingMember) {
 void sendChat(ChatParticipant sendingMember, message) {
   for (var participant in _participantList) {
     if (participant != sendingMember) {
-      participant.socket.sink.add("$message");
+      participant.sendMessage(message);
     }
   }
 }
@@ -105,26 +114,7 @@ final _websocket = webSocketHandler((webSocket) {
   });
 });
 
-Response _helloWorldHandler(Request request) => Response.ok('Hello, World!');
-
-Response _sumHandler(request, String a, String b) {
-  final aNum = int.parse(a);
-  final bNum = int.parse(b);
-  return Response.ok(
-    const JsonEncoder.withIndent(' ')
-        .convert({'a': aNum, 'b': bNum, 'sum': aNum + bNum}),
-    headers: {
-      'content-type': 'application/json',
-      'Cache-Control': 'public, max-age=604800',
-    },
-  );
-}
-
 // Notes
-// https://api.dart.dev/stable/2.17.0/dart-io/WebSocket-class.html
 // https://github.com/achilleasa/dart_amqp/blob/master/example/example.md
 // https://github.com/rabbitmq/rabbitmq-tutorials/blob/master/dart/send.dart
 // https://github.com/rabbitmq/rabbitmq-tutorials/blob/master/dart/receive.dart
-// https://dart.dev/
-// https://flutter.dev/
-// https://gist.github.com/mitsuoka/2969464
