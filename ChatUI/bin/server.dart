@@ -24,8 +24,9 @@ Future main(List<String> arguments) async {
 
   Channel channel = await client
       .channel(); // auto-connect to localhost:5672 using guest credentials
-  Queue queue = await channel.queue("hello");
-  Consumer consumer = await queue.consume();
+  Exchange exchange =
+      await channel.exchange("chat", ExchangeType.TOPIC, durable: true);
+  Consumer consumer = await exchange.bindPrivateQueueConsumer(["#"]);
   consumer.listen((AmqpMessage message) {
     sendChat(rabbitChat, message.payloadAsString);
   });
