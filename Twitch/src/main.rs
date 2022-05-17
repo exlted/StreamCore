@@ -17,6 +17,7 @@ type WebResult<T> = StdResult<T, Rejection>;
 #[derive(Serialize, Deserialize)]
 struct Message {
     message: String,
+    raw_message: String,
     username: String,
     user_color_r: String,
     user_color_g: String,
@@ -56,7 +57,7 @@ pub async fn main() {
         while let Some(message) = incoming_messages.recv().await {
             match message {
             ServerMessage::Privmsg(msg) => {
-                let mut text = msg.message_text;
+                let mut text = msg.message_text.clone();
                 for emote in &msg.emotes {
                     let url = format!("<img href='https://static-cdn.jtvnw.net/emoticons/v1/{}/3.0'>", emote.id);
                     text = text.replace(&emote.code, &url);
@@ -72,6 +73,7 @@ pub async fn main() {
                     source_badge_large: "https://static.twitchcdn.net/assets/favicon-32-e29e246c157142c94346.png".to_string(),
                     source_badge_small: "https://static.twitchcdn.net/assets/favicon-16-52e571ffea063af7a7f4.png".to_string(),
                     message: text,
+                    raw_message: msg.message_text,
                     username: msg.sender.name,
                     user_color_r: name_color.r.to_string(),
                     user_color_g: name_color.g.to_string(), 
