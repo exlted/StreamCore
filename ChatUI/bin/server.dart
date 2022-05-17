@@ -58,7 +58,7 @@ Future main(List<String> arguments) async {
 
 // Serve files from the file system.
 final _staticHandler =
-    shelf_static.createStaticHandler('public', defaultDocument: 'index.html');
+    shelf_static.createStaticHandler('public', defaultDocument: 'main.html');
 
 class ChatParticipant {
   WebSocketChannel? socket;

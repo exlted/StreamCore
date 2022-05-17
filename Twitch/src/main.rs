@@ -59,7 +59,7 @@ pub async fn main() {
             ServerMessage::Privmsg(msg) => {
                 let mut text = msg.message_text.clone();
                 for emote in &msg.emotes {
-                    let url = format!("<img href='https://static-cdn.jtvnw.net/emoticons/v1/{}/3.0'>", emote.id);
+                    let url = format!("<img src='https://static-cdn.jtvnw.net/emoticons/v1/{}/3.0'>", emote.id);
                     text = text.replace(&emote.code, &url);
                 }
                 //for badge in &msg.badges {

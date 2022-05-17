@@ -1,0 +1,26 @@
+[{
+  "elementType": "script",
+  "includeAttrs": {
+    "type": {
+      "text": "text/javascript",
+      "prepend": false
+    },
+    "src": {
+      "text": "/default.js",
+      "prepend": true
+    }
+  }
+},
+{
+  "elementType": "link",
+  "includeAttrs": {
+    "rel": { 
+      "text": "stylesheet",
+      "prepend": false
+    },
+    "href": {
+      "text": "/default.css",
+      "prepend": true
+    }
+  }
+}]
