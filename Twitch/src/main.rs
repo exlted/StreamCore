@@ -1,16 +1,31 @@
 use twitch_irc::login::StaticLoginCredentials;
 use twitch_irc::TwitchIRCClient;
 use twitch_irc::{ClientConfig, SecureTCPTransport};
-use twitch_irc::message::ServerMessage;
+use twitch_irc::message::{RGBColor, ServerMessage};
 use futures::{join};
 use std::result::Result as StdResult;
 use warp::{Filter, Rejection, Reply};
 use amiquip::{Connection, ExchangeDeclareOptions, ExchangeType, Publish};
 use tokio::{task};
+use serde::{Serialize, Deserialize};
+use serde_json;
 
 type WebResult<T> = StdResult<T, Rejection>;
 
 // #1 Debug sends (We shouldn't recieve our own messages, everybody should recieve the messages we send)
+
+#[derive(Serialize, Deserialize)]
+struct Message {
+    message: String,
+    username: String,
+    user_color_r: String,
+    user_color_g: String,
+    user_color_b: String,
+    from: String, // ID of which program generated this message
+    source_badge_large: String,
+    source_badge_small: String,
+    user_badges: Vec<String>
+}
 
 #[tokio::main]
 pub async fn main() {
@@ -49,8 +64,25 @@ pub async fn main() {
                 //for badge in &msg.badges {
                 //    println!("name:{} version:{}", badge.name, badge.version);
                 //}
-                println!("(#{}) {}: {}", msg.channel_login, msg.sender.name, text);
-                exchange.publish(Publish::new(format!("(#{}) {}: {}", msg.channel_login, msg.sender.name, text).as_bytes(), routing_key.clone())).unwrap();
+
+                let name_color = msg.name_color.unwrap_or(RGBColor{r: 255, g: 255, b: 255});
+
+                let message = Message{
+                    from: "Twitch".to_string(),
+                    source_badge_large: "https://static.twitchcdn.net/assets/favicon-32-e29e246c157142c94346.png".to_string(),
+                    source_badge_small: "https://static.twitchcdn.net/assets/favicon-16-52e571ffea063af7a7f4.png".to_string(),
+                    message: text,
+                    username: msg.sender.name,
+                    user_color_r: name_color.r.to_string(),
+                    user_color_g: name_color.g.to_string(), 
+                    user_color_b: name_color.b.to_string(),
+                    user_badges: ["".to_string()].to_vec()
+                };
+
+                let message_json = serde_json::to_string(&message).unwrap();
+
+                println!("{}", message_json);
+                exchange.publish(Publish::new(message_json.as_bytes(), routing_key.clone())).unwrap();
             },
             //ServerMessage::Whisper(msg) => {
             //    println!("(w) {}: {}", msg.sender.name, msg.message_text);
