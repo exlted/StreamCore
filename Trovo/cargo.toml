@@ -1,0 +1,16 @@
+[package]
+name = "streamcore_trovo_chat_ingest"
+version = "0.1.0"
+authors = ["exlted <exltedofdrg@gmail.com>"]
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+trovo = "0.4.0"
+tokio = { version = "1.17.0", features = ["full"] }
+tokio-amqp = "1.0.0"
+amiquip = "0.4.2"
+serde = "1.0.137"
+serde_json = "1.0.81"
+futures-util = "0.3.21"
