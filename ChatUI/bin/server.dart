@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 // https://github.com/dart-lang/samples/blob/master/server/simple/bin/server.dart
 
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:shelf/shelf.dart';
@@ -24,8 +25,8 @@ Future main(List<String> arguments) async {
   settings.host = Platform.environment['AMPQ_HOST'] ?? "127.0.0.1";
   settings.port = int.parse(Platform.environment['AMPQ_PORT'] ?? "5672");
   settings.authProvider = PlainAuthenticator(
-      Platform.environment['USERNAME'] ?? "guest",
-      Platform.environment['PASSWORD'] ?? "guest");
+      Platform.environment['AMPQ_USERNAME'] ?? "guest",
+      Platform.environment['AMPQ_PASSWORD'] ?? "guest");
 
   Client client = Client(settings: settings);
 
@@ -104,6 +105,7 @@ void removeChatParticipant(ChatParticipant leavingMember) {
 }
 
 void sendChat(ChatParticipant sendingMember, message) {
+  log(message);
   for (var participant in _participantList) {
     if (participant != sendingMember) {
       participant.sendMessage(message);

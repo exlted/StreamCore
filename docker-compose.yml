@@ -10,12 +10,24 @@ services:
       # All configurable environment variables in streamcore-chat-ui
       - AMPQ_HOST=rabbit-mq
       - AMPQ_PORT=5672
-      - USERNAME=guest
-      - PASSWORD=guest
+      - AMPQ_USERNAME=guest
+      - AMPQ_PASSWORD=guest
       - EXCHANGE_NAME=chat
     # Uncomment and define to provide your custom chat UI to this container
     #volumes:
     #  - /customization:/public/cust
     ports:
       - 8080:8080
+    restart: on-failure
+  youtube:
+    image: "streamcore-chat-youtube-ingest"
+    depends_on:
+      - rabbit-mq
+    environment:
+      - AMPQ_HOST=rabbit-mq
+      - AMPQ_PORT=5672
+      - AMPQ_USERNAME=guest
+      - AMPQ_PASSWORD=guest
+      - EXCHANGE_NAME=chat
+      - YT_CHANNEL_ID=UCgHUiD9lbIgi1y8pMBUuiNQ # Set to the channel ID you want to listen to
     restart: on-failure
