@@ -2,7 +2,6 @@ const { EventEmitter } = require('events');
 const { inherits } = require('util');
 const axios = require('axios');
 const Utils = require('./utils')
-const Parser = require('./parser')
 
 
 function YoutubeChat({ channelId }) {
