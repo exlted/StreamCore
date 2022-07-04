@@ -29,5 +29,5 @@ services:
       - AMPQ_USERNAME=guest
       - AMPQ_PASSWORD=guest
       - EXCHANGE_NAME=chat
-      - YT_CHANNEL_ID=UCgHUiD9lbIgi1y8pMBUuiNQ # Set to the channel ID you want to listen to
+      # - YT_CHANNEL_ID= # Set to the channel ID you want to listen to
     restart: on-failure
