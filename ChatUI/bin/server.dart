@@ -20,12 +20,20 @@ Future main(List<String> arguments) async {
   RMQChatParticipant rabbitChat = RMQChatParticipant(nextParticipantID());
   registerChatParticipant(rabbitChat);
 
-  Client client = Client();
+  ConnectionSettings settings = ConnectionSettings();
+  settings.host = Platform.environment['AMPQ_HOST'] ?? "127.0.0.1";
+  settings.port = int.parse(Platform.environment['AMPQ_PORT'] ?? "5672");
+  settings.authProvider = PlainAuthenticator(
+      Platform.environment['USERNAME'] ?? "guest",
+      Platform.environment['PASSWORD'] ?? "guest");
+
+  Client client = Client(settings: settings);
 
   Channel channel = await client
       .channel(); // auto-connect to localhost:5672 using guest credentials
-  Exchange exchange =
-      await channel.exchange("chat", ExchangeType.TOPIC, durable: true);
+  Exchange exchange = await channel.exchange(
+      Platform.environment['EXCHANGE_NAME'] ?? "chat", ExchangeType.TOPIC,
+      durable: true);
   Consumer consumer = await exchange.bindPrivateQueueConsumer(["#"]);
   consumer.listen((AmqpMessage message) {
     sendChat(rabbitChat, message.payloadAsString);
@@ -33,7 +41,7 @@ Future main(List<String> arguments) async {
 
   // If the "PORT" environment variable is set, listen to it. Otherwise, 8080.
   // https://cloud.google.com/run/docs/reference/container-contract#port
-  final port = int.parse(Platform.environment['PORT'] ?? '8080');
+  final port = 8080;
 
   // See https://pub.dev/documentation/shelf/latest/shelf/Cascade-class.html
   final cascade = Cascade()

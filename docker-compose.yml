@@ -1,0 +1,21 @@
+version: "3.9"
+services:
+  rabbit-mq:
+    image: "rabbitmq"
+  chat-ui:
+    image: "streamcore-chat-ui"
+    depends_on:
+      - "rabbit-mq"
+    environment:
+      # All configurable environment variables in streamcore-chat-ui
+      - AMPQ_HOST=rabbit-mq
+      - AMPQ_PORT=5672
+      - USERNAME=guest
+      - PASSWORD=guest
+      - EXCHANGE_NAME=chat
+    # Uncomment and define to provide your custom chat UI to this container
+    #volumes:
+    #  - /customization:/public/cust
+    ports:
+      - 8080:8080
+    restart: on-failure
