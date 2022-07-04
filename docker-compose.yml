@@ -3,7 +3,7 @@ services:
   rabbit-mq:
     image: "rabbitmq"
   chat-ui:
-    image: "streamcore-chat-ui"
+    image: "exlted2/streamcore-chat-ui"
     depends_on:
       - "rabbit-mq"
     environment:
@@ -20,7 +20,7 @@ services:
       - 8080:8080
     restart: on-failure
   youtube:
-    image: "streamcore-chat-youtube-ingest"
+    image: "exlted2/streamcore-chat-youtube-ingest"
     depends_on:
       - rabbit-mq
     environment:
