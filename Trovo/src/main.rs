@@ -20,21 +20,29 @@ struct Message {
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
-    let mut connection = Connection::insecure_open("amqp://guest:guest@localhost:5672").unwrap();
+    let host = env::var("AMPQ_HOST").unwrap_or("localhost".to_string());
+    let port = env::var("AMPQ_PORT").unwrap_or("5672".to_string());
+    let username = env::var("AMPQ_USERNAME").unwrap_or("guest".to_string());
+    let password = env::var("AMPQ_PASSWORD").unwrap_or("guest".to_string());
+    let exchange = env::var("EXCHANGE_NAME").unwrap_or("chat".to_string());
+    
+    let url = format!("amqp://{}:{}@{}:{}", username, password, host, port);
+
+    let mut connection = Connection::insecure_open(&url).unwrap();
     let channel = connection.open_channel(None).unwrap();
     let exchange = channel.exchange_declare(
         ExchangeType::Topic,
-        "chat",
+        exchange,
         ExchangeDeclareOptions{
             durable: true,
             ..ExchangeDeclareOptions::default()
         },
     ).unwrap();
 
-    let routing_key = "twitch".to_string();
+    let routing_key = "trovo".to_string();
 
     let client_id = env::var("CLIENT_ID").expect("missing CLIENT_ID env var");
-    let username = env::var("USER_NAME").expect("missing USER_NAME env var");
+    let username = env::var("CHANNEL_USERNAME").expect("missing CHANNEL_USERNAME env var");
 
     let client = trovo::Client::new(ClientId::new(client_id));
 
@@ -52,8 +60,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
         println!("[{}] {}", msg.nick_name, msg.content);
         let message = Message {
             from: "Trovo".to_string(),
-            source_badge_large: "https://static.twitchcdn.net/assets/favicon-32-e29e246c157142c94346.png".to_string(),
-            source_badge_small: "https://static.twitchcdn.net/assets/favicon-16-52e571ffea063af7a7f4.png".to_string(),
+            source_badge_large: "https://astatic.trovocdn.net/cat/favicon.ico".to_string(),
+            source_badge_small: "https://astatic.trovocdn.net/cat/favicon.ico".to_string(),
             message: msg.content.clone(),
             raw_message: msg.content.clone(),
             username: msg.nick_name,
