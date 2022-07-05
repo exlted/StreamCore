@@ -19,8 +19,20 @@ services:
     ports:
       - 8080:8080
     restart: on-failure
-  youtube:
-    image: "exlted2/streamcore-chat-youtube-ingest"
+  #youtube:
+  #  image: "exlted2/streamcore-chat-youtube-ingest"
+  #  depends_on:
+  #    - rabbit-mq
+  #  environment:
+  #    - AMPQ_HOST=rabbit-mq
+  #    - AMPQ_PORT=5672
+  #    - AMPQ_USERNAME=guest
+  #    - AMPQ_PASSWORD=guest
+  #    - EXCHANGE_NAME=chat
+  #    # - YT_CHANNEL_ID= # Set to the channel ID you want to listen to
+  #  restart: on-failure
+  twitch:
+    image: "exlted2/streamcore-chat-twitch"
     depends_on:
       - rabbit-mq
     environment:
@@ -29,5 +41,5 @@ services:
       - AMPQ_USERNAME=guest
       - AMPQ_PASSWORD=guest
       - EXCHANGE_NAME=chat
-      # - YT_CHANNEL_ID= # Set to the channel ID you want to listen to
+      - CHANNEL_USERNAME=exlted # Set to the channel ID you want to listen to
     restart: on-failure

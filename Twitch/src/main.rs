@@ -2,15 +2,11 @@ use twitch_irc::login::StaticLoginCredentials;
 use twitch_irc::TwitchIRCClient;
 use twitch_irc::{ClientConfig, SecureTCPTransport};
 use twitch_irc::message::{RGBColor, ServerMessage};
-use futures::{join};
-use std::result::Result as StdResult;
-use warp::{Filter, Rejection, Reply};
 use amiquip::{Connection, ExchangeDeclareOptions, ExchangeType, Publish};
 use tokio::{task};
 use serde::{Serialize, Deserialize};
 use serde_json;
-
-type WebResult<T> = StdResult<T, Rejection>;
+use std::env;
 
 // #1 Debug sends (We shouldn't recieve our own messages, everybody should recieve the messages we send)
 
@@ -41,11 +37,19 @@ pub async fn main() {
     // otherwise they will back up.
     local.spawn_local(async move {
         println!("Starting Twitch Listen");
-        let mut connection = Connection::insecure_open("amqp://guest:guest@localhost:5672").unwrap();
+        let host = env::var("AMPQ_HOST").unwrap_or("localhost".to_string());
+        let port = env::var("AMPQ_PORT").unwrap_or("5672".to_string());
+        let username = env::var("AMPQ_USERNAME").unwrap_or("guest".to_string());
+        let password = env::var("AMPQ_PASSWORD").unwrap_or("guest".to_string());
+        let exchange = env::var("EXCHANGE_NAME").unwrap_or("chat".to_string());
+
+        let url = format!("amqp://{}:{}@{}:{}", username, password, host, port);
+
+        let mut connection = Connection::insecure_open(&url).unwrap();
         let channel = connection.open_channel(None).unwrap();
         let exchange = channel.exchange_declare(
             ExchangeType::Topic,
-            "chat",
+            exchange,
             ExchangeDeclareOptions{
                 durable: true,
                 ..ExchangeDeclareOptions::default()
@@ -118,23 +122,10 @@ pub async fn main() {
     //     If we allow for multiple simultaneous channel joins channel custom badges need to be stored _with_ the channel name associated as they are not unique
 
     // join a channel
-    client.join("exlted".to_owned());
+    let twitch_account = env::var("CHANNEL_USERNAME").unwrap_or("".to_string());
+    client.join(twitch_account);
     
     // keep the tokio executor alive.
     // If you return instead of waiting the background task will exit.
     local.await;
-
-
-    let health_route = warp::path!("health").and_then(health_handler);
-    let routes = health_route;
-
-    println!("Started server at localhost:8000");
-    let _ = join!(
-        warp::serve(routes).run(([0, 0, 0, 0], 8000))
-        //rmq_listen(pool.clone())
-    );
-}
-
-async fn health_handler() -> WebResult<impl Reply> {
-    Ok("OK")
 }
