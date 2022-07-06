@@ -1,6 +1,5 @@
 const amqp = require('amqplib');
 const YoutubeChat = require("../lib/client");
-const { exit } = require('process');
 
 function getEnvVar(variable, defaultVal) {
     if (variable in process.env) {
@@ -16,22 +15,32 @@ let ampqPort = getEnvVar("AMPQ_PORT", "5672");
 let username = getEnvVar("AMPQ_USERNAME", "guest");
 let password = getEnvVar("AMPQ_PASSWORD", "guest");
 let exchange = getEnvVar("EXCHANGE_NAME", "chat");
-let channelId = getEnvVar("YT_CHANNEL_ID", "UCgHUiD9lbIgi1y8pMBUuiNQ");
+let channelId = getEnvVar("YT_CHANNEL_ID", "");
 
 
 
 const yt = new YoutubeChat({channelId: channelId});
 
 const key = 'youtube';
-yt.connect();
+
+function tryConnect() {
+    let findNewLive = setInterval(() => {
+        if(yt.connect().await) {
+            clearInterval(findNewLive);
+        }
+    }, 60000);
+    yt.connect();
+}
+
+tryConnect();
+
 
 yt.on('start', ()=> {
     console.log('Connected to YouTube!');
 });
 
 yt.on('error', error => {
-    console.error(error);
-    exit;
+    console.log(error);
 });
 
 let url = "amqp://" + username + ":" + password + "@" + ampqHost + ":" + ampqPort; 
@@ -62,4 +71,9 @@ amqp.connect(url).then(function(conn) {
             });
         });
     });
+});
+
+yt.on('live_ended', () => {
+    yt.stop();
+    tryConnect();
 });
