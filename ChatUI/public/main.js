@@ -1,5 +1,7 @@
 // #3 - Dockerize everything (Allow for docker builds)
 
+window.global = {};
+
 let socket = new WebSocket("ws://" + location.host);
 socket.onopen = function(e) {
   //alert("[open] Connection established");
@@ -49,9 +51,33 @@ function loadDefaultCust() {
 }
 
 function loadCust(customizationIndex, customization) {
-
   const head = document.getElementsByTagName("head")[0];
   customizationIndex.forEach(includeFile => {
+    if (includeFile.elementType == "html") {
+      let body = document.getElementsByTagName("body")[0];
+
+      fetch("/cust/" + customization + "/" + includeFile.url)
+      .then(response=> response.text())
+      .then(text=> body.innerHTML += text);
+      
+      return;
+    }
+    if (includeFile.elementType == "json") {
+      fetch("/cust/" + customization + "/" + includeFile.url)
+      .then(response=> response.text())
+      .then(text => {
+        const data = JSON.parse(text)
+        if (includeFile.cssVars) {
+          const root = document.querySelector(":root");
+  
+          for (const property in data) {
+            root.style.setProperty("--" + property, data[property]);
+          }
+        } else {
+          window.global[includeFile.jsid] = data;
+        }
+      });
+    }
     let element = document.createElement(includeFile.elementType);
     for (let attr in includeFile.includeAttrs) {
       if (includeFile.includeAttrs.hasOwnProperty(attr)){
@@ -89,6 +115,10 @@ if (customization == null) {
     if (this.readyState == 4) {
       if (this.status == 200) {
         loadCust(JSON.parse(this.responseText), customization);
+        setTimeout(() => {
+          let event = new CustomEvent("onWidgetLoad", {});
+          window.dispatchEvent(event);
+        }, 1000);
       } else {
         alert("Loading of customization [" + customization + "] failed. Please check your configuration");
         loadDefaultCust();
