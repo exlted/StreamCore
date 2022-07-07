@@ -1,0 +1,36 @@
+name: Docker Image CI - Trovo Chat
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: YassinEldeeb/has-changed-path@v2.1
+      with:
+        paths: ./ChatUI
+    - uses: docker/login-action@v2.0.0
+      with: 
+        registry: ghcr.io
+        username: ${{ github.repository_owner }}
+        password: ${{ secrets.REGISTRY_TOKEN }}
+    - uses: docker/metadata-action@v4.0.1
+      id: meta
+      with:
+        images: ghcr.io/exlted/streamcore-chat-trovo
+        tags: |
+          type=sha
+          rype=raw,value=latest,enable={{is_default_branch}}
+    - name: Build the Docker image
+      uses: docker/build-push-action@v2
+      with:
+        context: ./ChatUI
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
