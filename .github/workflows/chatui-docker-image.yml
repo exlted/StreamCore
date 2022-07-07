@@ -17,7 +17,7 @@ jobs:
         registry: ghcr.io
         username: ${{github.repository_owner}}
         password: ${{secrets.REGISTRY_TOKEN}}
-    - uses: docker/metadata-action@4.0.1
+    - uses: docker/metadata-action@v4.0.1
       with:
         images: ghcr.io/exlted/streamcore-chat-ui
         tags: |
