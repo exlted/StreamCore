@@ -27,7 +27,7 @@ jobs:
           type=sha
           rype=raw,value=latest,enable={{is_default_branch}}
     - name: Build the Docker image
-      uses: docker/build-push-action@v2zs
+      uses: docker/build-push-action@v2
       with:
         context: ./Trovo
         push: true
