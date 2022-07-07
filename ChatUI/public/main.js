@@ -82,6 +82,7 @@ function loadCust(customizationIndex, customization) {
           window.global[includeFile.jsid] = data;
         }
       });
+      return;
     }
     let element = document.createElement(includeFile.elementType);
     for (let attr in includeFile.includeAttrs) {
