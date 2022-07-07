@@ -18,6 +18,7 @@ jobs:
         username: ${{ github.repository_owner }}
         password: ${{ secrets.REGISTRY_TOKEN }}
     - uses: docker/metadata-action@v4.0.1
+      id: meta
       with:
         images: ghcr.io/exlted/streamcore-chat-ui
         tags: |
