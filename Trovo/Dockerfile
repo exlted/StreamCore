@@ -1,7 +1,5 @@
 FROM rust:latest as builder
 
-WORKDIR /app
-
 COPY . .
 
 RUN cargo install --path .
