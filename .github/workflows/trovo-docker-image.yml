@@ -17,7 +17,7 @@ jobs:
     - uses: YassinEldeeb/has-changed-path@v2.1
       id: changed-package
       with:
-        paths: ./ChatUI
+        paths: ./Trovo
     - uses: docker/login-action@v2.0.0
       if: steps.changed-package.outputs.changed == 'true'
       with: 
