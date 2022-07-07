@@ -16,6 +16,16 @@ document.addEventListener("messageRecieved", function(e) {
         })
     });
 
+    if (window.global.streamelements.sourceAsBadge) {
+        let url = e.source_badge_small
+        if (window.global.streamelements.useLargeSource) {
+            url = e.source_badge_large;
+        }
+        data.badges.push({
+            url: url
+        });
+    }
+
     let seEvent = new CustomEvent("onEventReceived", {
         detail: {
             listener: "message",
