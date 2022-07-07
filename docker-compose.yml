@@ -3,7 +3,7 @@ services:
   rabbit-mq:
     image: "rabbitmq"
   chat-ui:
-    image: "exlted2/streamcore-chat-ui"
+    image: "ghcr.io/exlted/streamcore-chat-ui"
     depends_on:
       - "rabbit-mq"
     environment:
@@ -20,7 +20,7 @@ services:
       - 8080:8080
     restart: on-failure
   youtube:
-    image: "exlted2/streamcore-chat-youtube-ingest"
+    image: "ghcr.io/exlted/streamcore-chat-youtube-ingest"
     depends_on:
       - rabbit-mq
     environment:
@@ -32,7 +32,7 @@ services:
       # - YT_CHANNEL_ID= # Set to the channel ID you want to listen to
     restart: on-failure
   twitch:
-    image: "exlted2/streamcore-chat-twitch"
+    image: "ghcr.io/exlted/streamcore-chat-twitch"
     depends_on:
       - rabbit-mq
     environment:
@@ -44,7 +44,7 @@ services:
       #- CHANNEL_USERNAME= # Set to the Twitch Username you want to listen to
     restart: on-failure
   trovo:
-    image: "exlted2/streamcore-chat-trovo"
+    image: "ghcr.io/exlted/streamcore-chat-trovo"
     depends_on:
       - rabbit-mq
     environment:

@@ -1,4 +1,4 @@
-name: Chat UI CI/CD
+name: Youtube Chat CI/CD
 
 on:
   push:
@@ -17,7 +17,7 @@ jobs:
     - uses: YassinEldeeb/has-changed-path@v2.1
       id: changed-package
       with:
-        paths: ./ChatUI
+        paths: ./Youtube
     - uses: docker/login-action@v2.0.0
       if: steps.changed-package.outputs.changed == 'true'
       with: 
@@ -28,7 +28,7 @@ jobs:
       if: steps.changed-package.outputs.changed == 'true'
       id: meta
       with:
-        images: ghcr.io/exlted/streamcore-chat-ui
+        images: ghcr.io/exlted/streamcore-chat-youtube-ingest
         tags: |
           type=sha
           rype=raw,value=latest,enable={{is_default_branch}}
@@ -36,7 +36,7 @@ jobs:
       uses: docker/build-push-action@v2
       if: steps.changed-package.outputs.changed == 'true'
       with:
-        context: ./ChatUI
+        context: ./Youtube
         push: true
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
