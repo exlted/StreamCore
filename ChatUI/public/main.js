@@ -2,7 +2,12 @@
 
 window.global = {};
 
-let socket = new WebSocket("ws://" + location.host);
+let protocol = "ws://";
+if (location.protocol == "https:") {
+  protocol = "wss://"
+}
+
+let socket = new WebSocket(protocol + location.host);
 socket.onopen = function(e) {
   //alert("[open] Connection established");
   //alert("Sending to server");
