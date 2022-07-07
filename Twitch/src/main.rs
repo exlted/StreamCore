@@ -81,9 +81,9 @@ pub async fn main() {
                     message: text,
                     raw_message: msg.message_text,
                     username: msg.sender.name,
-                    user_color_r: name_color.r.to_string(),
-                    user_color_g: name_color.g.to_string(), 
-                    user_color_b: name_color.b.to_string(),
+                    user_color_r: format!("{:x}", name_color.r),
+                    user_color_g: format!("{:x}", name_color.g), 
+                    user_color_b: format!("{:x}", name_color.b),
                     user_badges: ["".to_string()].to_vec()
                 };
 
