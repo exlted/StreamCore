@@ -5,7 +5,7 @@ document.addEventListener("messageRecieved", function(e) {
         emotes: [],
         nick: e.detail.username,
         badges: [],
-        displayColor: e.detail.user_color_r + e.detail.user_color_g + e.detail.user_color_b,
+        displayColor: "#" + e.detail.user_color_r + e.detail.user_color_g + e.detail.user_color_b,
         displayName: e.detail.username,
         isAction: false
     };
