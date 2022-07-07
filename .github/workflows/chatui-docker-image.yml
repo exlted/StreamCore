@@ -23,5 +23,5 @@ jobs:
         context: ./ChatUI
         push: true
         tags: |
-          ghcr.io/streamcore-chat-ui:$(date +%s)
+          ghcr.io/streamcore-chat-ui:${{date +%s}}
           ghcr.io/streamcore-chat-ui:latest
