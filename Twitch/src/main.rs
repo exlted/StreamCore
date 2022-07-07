@@ -45,6 +45,8 @@ pub async fn main() {
 
         let url = format!("amqp://{}:{}@{}:{}", username, password, host, port);
 
+        println!("amqp://{}:{}@{}:{}", username, password, host, port);
+
         let mut connection = Connection::insecure_open(&url).unwrap();
         let channel = connection.open_channel(None).unwrap();
         let exchange = channel.exchange_declare(
@@ -88,7 +90,13 @@ pub async fn main() {
                 let message_json = serde_json::to_string(&message).unwrap();
 
                 println!("{}", message_json);
-                exchange.publish(Publish::new(message_json.as_bytes(), routing_key.clone())).unwrap();
+                let publish_state = exchange.publish(Publish::new(message_json.as_bytes(), routing_key.clone()));
+                if publish_state.is_err() {
+                    let err = publish_state.unwrap_err();
+                    println!("{}", err);
+                } else {
+                    publish_state.unwrap();
+                }
             },
             //ServerMessage::Whisper(msg) => {
             //    println!("(w) {}: {}", msg.sender.name, msg.message_text);
