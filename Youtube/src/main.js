@@ -54,8 +54,8 @@ amqp.connect(url).then(function(conn) {
             yt.on('message', (data) => {
                 var message = {
                     from: "Youtube",
-                    source_badge_large: "view-source:https://www.youtube.com/s/desktop/f9ccd8c6/img/favicon_32x32.png",
-                    source_badge_small: "view-source:https://www.youtube.com/s/desktop/f9ccd8c6/img/favicon.ico",
+                    source_badge_large: "https://www.youtube.com/s/desktop/f9ccd8c6/img/favicon_32x32.png",
+                    source_badge_small: "https://www.youtube.com/s/desktop/f9ccd8c6/img/favicon.ico",
                     message: data.message.runs[0].text,
                     raw_message: data.message.runs[0].text,
                     username: data.authorName.simpleText,
