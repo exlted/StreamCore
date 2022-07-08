@@ -15,7 +15,7 @@ let ampqPort = getEnvVar("AMPQ_PORT", "5672");
 let username = getEnvVar("AMPQ_USERNAME", "guest");
 let password = getEnvVar("AMPQ_PASSWORD", "guest");
 let exchange = getEnvVar("EXCHANGE_NAME", "chat");
-let channelId = getEnvVar("YT_CHANNEL_ID", "");
+let channelId = getEnvVar("YT_CHANNEL_ID", "UCgHUiD9lbIgi1y8pMBUuiNQ");
 
 
 
@@ -58,7 +58,7 @@ amqp.connect(url).then(function(conn) {
                     source_badge_small: "view-source:https://www.youtube.com/s/desktop/f9ccd8c6/img/favicon.ico",
                     message: data.message.runs[0].text,
                     raw_message: data.message.runs[0].text,
-                    username: data.authorName,
+                    username: data.authorName.simpleText,
                     user_color_r: "FF",
                     user_color_g: "FF",
                     user_color_b: "FF",
