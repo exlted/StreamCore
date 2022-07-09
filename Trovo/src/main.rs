@@ -77,7 +77,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         }
         for cap in EMOTE_RE.captures_iter(&msg.content) {
             println!("{} {} {}", cap[0].to_string(), cap[1].to_string(), cap[2].to_string());
-            let url = format!("img.trovo.live/emotes/{}.png", cap[2].to_string());
+            let url = format!("http://img.trovo.live/emotes/{}.png?v=17&imageView2", cap[2].to_string());
             emotes.push(Emote {
                 url: url.clone(),
                 name: cap[1].to_string()
