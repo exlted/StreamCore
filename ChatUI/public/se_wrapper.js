@@ -1,7 +1,7 @@
 // This is a wrapper to wrap StreamCore events and translate them into a format that StreamElements chat customizations will understand
 document.addEventListener("messageRecieved", function(e) {
     let data = {
-        text: e.detail.message,
+        text: e.detail.raw_message,
         emotes: [],
         nick: e.detail.username,
         badges: [],
@@ -9,6 +9,12 @@ document.addEventListener("messageRecieved", function(e) {
         displayName: e.detail.username,
         isAction: false
     };
+
+    e.detail.message_emotes.forEach(element => {
+        data.emotes.push({
+            url: element
+        })
+    });
 
     e.detail.user_badges.forEach(element => {
         data.badges.push({

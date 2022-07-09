@@ -21,7 +21,8 @@ struct Message {
     from: String, // ID of which program generated this message
     source_badge_large: String,
     source_badge_small: String,
-    user_badges: Vec<String>
+    user_badges: Vec<String>,
+    message_emotes: Vec<String>
 }
 
 #[tokio::main]
@@ -64,15 +65,19 @@ pub async fn main() {
             match message {
             ServerMessage::Privmsg(msg) => {
                 let mut text = msg.message_text.clone();
+                let mut emotes = Vec::new();
                 for emote in &msg.emotes {
-                    let url = format!("<img src='https://static-cdn.jtvnw.net/emoticons/v1/{}/3.0'>", emote.id);
-                    text = text.replace(&emote.code, &url);
+                    let url = format!("https://static-cdn.jtvnw.net/emoticons/v1/{}/3.0", emote.id);
+                    emotes.push(url.clone());
+                    let html = format!("<img src='{}'>", url);
+                    text = text.replace(&emote.code, &html);
                 }
+                let badges = Vec::new();
                 //for badge in &msg.badges {
                 //    println!("name:{} version:{}", badge.name, badge.version);
                 //}
 
-                let name_color = msg.name_color.unwrap_or(RGBColor{r: 255, g: 255, b: 255});
+                let name_color = msg.name_color.unwrap_or(RGBColor{r: 144, g: 70, b: 255});
 
                 let message = Message{
                     from: "Twitch".to_string(),
@@ -84,7 +89,8 @@ pub async fn main() {
                     user_color_r: format!("{:x}", name_color.r),
                     user_color_g: format!("{:x}", name_color.g), 
                     user_color_b: format!("{:x}", name_color.b),
-                    user_badges: ["".to_string()].to_vec()
+                    user_badges: badges,
+                    message_emotes: emotes
                 };
 
                 let message_json = serde_json::to_string(&message).unwrap();

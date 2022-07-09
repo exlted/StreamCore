@@ -15,7 +15,8 @@ struct Message {
     from: String, // ID of which program generated this message
     source_badge_large: String,
     source_badge_small: String,
-    user_badges: Vec<String>
+    user_badges: Vec<String>,
+    message_emotes: Vec<String>
 }
 
 #[tokio::main]
@@ -57,6 +58,9 @@ async fn main() -> Result<(), Box<dyn Error>> {
     println!("listening for chat messages");
     while let Some(msg) = messages.next().await {
         let msg = msg?;
+        // These can always be empty right now, that's okay
+        let badges = Vec::new();
+        let emotes = Vec::new();
         println!("[{}] {}", msg.nick_name, msg.content);
         let message = Message {
             from: "Trovo".to_string(),
@@ -65,10 +69,11 @@ async fn main() -> Result<(), Box<dyn Error>> {
             message: msg.content.clone(),
             raw_message: msg.content.clone(),
             username: msg.nick_name,
-            user_color_r: "FF".to_string(),
-            user_color_g: "FF".to_string(), 
-            user_color_b: "FF".to_string(),
-            user_badges: ["".to_string()].to_vec()
+            user_color_r: "19".to_string(),
+            user_color_g: "d6".to_string(), 
+            user_color_b: "6b".to_string(),
+            user_badges: badges,
+            message_emotes: emotes
         };
 
         let message_json = serde_json::to_string(&message).unwrap();

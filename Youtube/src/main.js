@@ -60,9 +60,12 @@ amqp.connect(url).then(function(conn) {
                     raw_message: data.message.runs[0].text,
                     username: data.authorName.simpleText,
                     user_color_r: "FF",
-                    user_color_g: "FF",
-                    user_color_b: "FF",
+                    user_color_g: "00",
+                    user_color_b: "00",
                     user_badges: [
+                        ""
+                    ],
+                    message_emotes: [
                         ""
                     ]
                 }
