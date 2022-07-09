@@ -145,7 +145,7 @@ pub async fn main() {
     //     If we allow for multiple simultaneous channel joins channel custom badges need to be stored _with_ the channel name associated as they are not unique
 
     // join a channel
-    let twitch_account = "exlted".to_string();
+    let twitch_account = env::var("CHANNEL_USERNAME").unwrap_or("".to_string());
     client.join(twitch_account);
     
     // keep the tokio executor alive.
