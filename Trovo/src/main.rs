@@ -1,8 +1,18 @@
 use std::{env, error::Error};
-use trovo::ClientId;
+use trovo::{ClientId};
+//use trovo::chat::ChatMessageType;
 use serde::{Serialize, Deserialize};
 use amiquip::{Connection, ExchangeDeclareOptions, ExchangeType, Publish};
 use futures_util::StreamExt;
+use regex::Regex;
+use lazy_static::lazy_static;
+
+#[derive(Serialize, Deserialize)]
+struct Emote {
+    url: String,
+    name: String
+}
+
 
 #[derive(Serialize, Deserialize)]
 struct Message {
@@ -16,7 +26,7 @@ struct Message {
     source_badge_large: String,
     source_badge_small: String,
     user_badges: Vec<String>,
-    message_emotes: Vec<String>
+    message_emotes: Vec<Emote>
 }
 
 #[tokio::main]
@@ -59,14 +69,28 @@ async fn main() -> Result<(), Box<dyn Error>> {
     while let Some(msg) = messages.next().await {
         let msg = msg?;
         // These can always be empty right now, that's okay
+        let mut text = msg.content.clone();
         let badges = Vec::new();
-        let emotes = Vec::new();
-        println!("[{}] {}", msg.nick_name, msg.content);
+        let mut emotes = Vec::new();
+        lazy_static! {
+            static ref EMOTE_RE: Regex = Regex::new(r"(:([^\s]*)) ").unwrap();
+        }
+        for cap in EMOTE_RE.captures_iter(&msg.content) {
+            println!("{} {} {}", cap[0].to_string(), cap[1].to_string(), cap[2].to_string());
+            let url = format!("img.trovo.live/emotes/{}.png", cap[2].to_string());
+            emotes.push(Emote {
+                url: url.clone(),
+                name: cap[1].to_string()
+            });
+            let html = format!("<img src='{}'>", url);
+            text = text.replace(&cap[1].to_string(), &html);
+        }
+
         let message = Message {
             from: "Trovo".to_string(),
             source_badge_large: "https://astatic.trovocdn.net/cat/favicon.ico".to_string(),
             source_badge_small: "https://astatic.trovocdn.net/cat/favicon.ico".to_string(),
-            message: msg.content.clone(),
+            message: text,
             raw_message: msg.content.clone(),
             username: msg.nick_name,
             user_color_r: "19".to_string(),
