@@ -11,6 +11,12 @@ use std::env;
 // #1 Debug sends (We shouldn't recieve our own messages, everybody should recieve the messages we send)
 
 #[derive(Serialize, Deserialize)]
+struct Emote {
+    url: String,
+    name: String
+}
+
+#[derive(Serialize, Deserialize)]
 struct Message {
     message: String,
     raw_message: String,
@@ -22,7 +28,7 @@ struct Message {
     source_badge_large: String,
     source_badge_small: String,
     user_badges: Vec<String>,
-    message_emotes: Vec<String>
+    message_emotes: Vec<Emote>
 }
 
 #[tokio::main]
@@ -68,7 +74,10 @@ pub async fn main() {
                 let mut emotes = Vec::new();
                 for emote in &msg.emotes {
                     let url = format!("https://static-cdn.jtvnw.net/emoticons/v1/{}/3.0", emote.id);
-                    emotes.push(url.clone());
+                    emotes.push(Emote {
+                        url: url.clone(),
+                        name: emote.code.clone()
+                    });
                     let html = format!("<img src='{}'>", url);
                     text = text.replace(&emote.code, &html);
                 }
@@ -136,7 +145,7 @@ pub async fn main() {
     //     If we allow for multiple simultaneous channel joins channel custom badges need to be stored _with_ the channel name associated as they are not unique
 
     // join a channel
-    let twitch_account = env::var("CHANNEL_USERNAME").unwrap_or("".to_string());
+    let twitch_account = "exlted".to_string();
     client.join(twitch_account);
     
     // keep the tokio executor alive.
