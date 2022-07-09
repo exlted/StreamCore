@@ -12,7 +12,7 @@ document.addEventListener("messageRecieved", function(e) {
 
     e.detail.message_emotes.forEach(element => {
         data.emotes.push({
-            url: element
+            element
         })
     });
 
