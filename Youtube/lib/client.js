@@ -81,11 +81,13 @@ class YoutubeChat extends EventEmitter {
 
       if (pageData.contents.liveChatRenderer) {
         pageData.contents.liveChatRenderer.actions.forEach(item => {
-          let data = item.addChatItemAction.item.liveChatTextMessageRenderer;
-          if (data) {
-            if (data.timestampUsec > this.prevTime) {
-              this.emit('message', data);
-              this.prevTime = data.timestampUsec;
+          if (item.addChatItemAction) {
+            let data = item.addChatItemAction.item.liveChatTextMessageRenderer;
+            if (data) {
+              if (data.timestampUsec > this.prevTime) {
+                this.emit('message', data);
+                this.prevTime = data.timestampUsec;
+              }
             }
           }
         });
