@@ -11,9 +11,7 @@ document.addEventListener("messageRecieved", function(e) {
     };
 
     e.detail.message_emotes.forEach(element => {
-        data.emotes.push({
-            element
-        })
+        data.emotes.push(element);
     });
 
     e.detail.user_badges.forEach(element => {
