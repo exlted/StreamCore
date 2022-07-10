@@ -95,9 +95,10 @@ pub async fn main() {
                     message: text,
                     raw_message: msg.message_text,
                     username: msg.sender.name,
-                    user_color_r: format!("{:x}", name_color.r),
-                    user_color_g: format!("{:x}", name_color.g), 
-                    user_color_b: format!("{:x}", name_color.b),
+                    // Ensure these all are 2 characters, no more, no less
+                    user_color_r: format!("{:02x}", name_color.r),
+                    user_color_g: format!("{:02x}", name_color.g), 
+                    user_color_b: format!("{:02x}", name_color.b),
                     user_badges: badges,
                     message_emotes: emotes
                 };
