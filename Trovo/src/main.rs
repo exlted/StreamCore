@@ -1,11 +1,12 @@
 use std::{env, error::Error};
-use trovo::{ClientId};
+use trovo::{ClientId, EmoteFetchType};
 //use trovo::chat::ChatMessageType;
 use serde::{Serialize, Deserialize};
 use amiquip::{Connection, ExchangeDeclareOptions, ExchangeType, Publish};
 use futures_util::StreamExt;
 use regex::Regex;
 use lazy_static::lazy_static;
+use std::collections::HashMap;
 
 #[derive(Serialize, Deserialize)]
 struct Emote {
@@ -64,6 +65,32 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .expect("no user found for the given username");
     println!("found user {:#?}", user);
 
+    let emotes = client.emotes(EmoteFetchType::All, [user.channel_id.clone()].to_vec()).await?;
+    let mut all_emotes = HashMap::new();
+    
+    for emote in emotes.global_emotes {
+        all_emotes.insert(
+            emote.name.clone(),
+            emote
+        );
+    }
+
+    for emote in emotes.event_emotes {
+        all_emotes.insert(
+            emote.name.clone(),
+            emote
+        );
+    }
+
+    for channel in emotes.customized_emotes.channel {
+        for emote in channel.emotes {
+            all_emotes.insert(
+                emote.name.clone(),
+                emote
+            );
+        }
+    }
+
     let mut messages = client.chat_messages_for_channel(&user.channel_id).await?;
     println!("listening for chat messages");
     while let Some(msg) = messages.next().await {
@@ -76,14 +103,24 @@ async fn main() -> Result<(), Box<dyn Error>> {
             static ref EMOTE_RE: Regex = Regex::new(r"(:([^\s]*)) ").unwrap();
         }
         for cap in EMOTE_RE.captures_iter(&msg.content) {
-            println!("{} {} {}", cap[0].to_string(), cap[1].to_string(), cap[2].to_string());
-            let url = format!("http://img.trovo.live/emotes/{}.png?v=17&imageView2", cap[2].to_string());
-            emotes.push(Emote {
-                url: url.clone(),
-                name: cap[1].to_string()
-            });
-            let html = format!("<img src='{}'>", url);
-            text = text.replace(&cap[1].to_string(), &html);
+            if all_emotes.contains_key(&cap[2].to_string()) {
+                let mut url = all_emotes[&cap[2].to_string()].url.clone();
+                if let Some(gifp) = all_emotes[&cap[2].to_string()].gifp.as_ref() {
+                    url = gifp.to_string();
+                }
+                else if let Some(webp) = all_emotes[&cap[2].to_string()].webp.as_ref(){
+                    url = webp.to_string();
+                }
+                url.push_str("?imageView2");
+                
+                emotes.push(Emote {
+                    url: url.clone(),
+                    name: cap[1].to_string()
+                });
+                let html = format!("<img src='{}'>", url);
+                text = text.replace(&cap[1].to_string(), &html);
+            }
+
         }
 
         let message = Message {
