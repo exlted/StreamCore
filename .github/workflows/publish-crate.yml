@@ -1,0 +1,34 @@
+name: Publish Crate
+
+on:
+  workflow_call:
+    inputs:
+      path:
+        required: true
+        type: string
+    secrets:
+      cargo:
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+  
+    steps:
+    - uses: actions/checkout@v3
+        fetch-depth: 5
+    - uses: YassinEldeeb/has-changed-path@v2.1
+      id: changed-package
+      with:
+        paths: ${{ inputs.path }}
+    - name: Build
+      if: steps.changed-package.outputs.changed == 'true'
+      run: |
+      cd ${{ inputs.path }}
+      cargo build --release
+    - name: publish
+      if: steps.changed-package.outputs.changed == 'true'
+      run: |
+      cd ${{ inputs.path }}
+      cargo package
+      cargo publish --token ${{ secrets.cargo }}
