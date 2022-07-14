@@ -8,7 +8,7 @@ jobs:
   build-chat_objects:
     uses: ./.github/workflows/publish-crate.yml
     with:
-      path: ./SharedCode/Rust/chat_objects
+      path: ./Shared_Code/Rust/chat_objects
     secrets:
       cargo: ${{ secrets.CARGO_TOKEN }}
   build-trovo:
@@ -17,6 +17,9 @@ jobs:
     with:
       path: ./Trovo
       image_name: ghcr.io/exlted/streamcore-chat-trovo
+    secrets:
+      username: ${{ github.repository_owner }}
+      password: ${{ secrets.REGISTRY_TOKEN }}
 
   build-twitch:
     needs: [build-chat_objects]
@@ -24,15 +27,24 @@ jobs:
     with:
       path: ./Twitch
       image_name: ghcr.io/exlted/streamcore-chat-twitch
+    secrets:
+      username: ${{ github.repository_owner }}
+      password: ${{ secrets.REGISTRY_TOKEN }}
 
   build-youtube:
     uses: ./.github/workflows/publish-docker-images.yml
     with:
       path: ./Youtube
       image_name: ghcr.io/exlted/streamcore-chat-youtube-ingest
+    secrets:
+      username: ${{ github.repository_owner }}
+      password: ${{ secrets.REGISTRY_TOKEN }}
 
   build-chatui:
     uses: ./.github/workflows/publish-docker-images.yml
     with:
       path: ./ChatUI
       image_name: ghcr.io/exlted/streamcore-chat-ui
+    secrets:
+      username: ${{ github.repository_owner }}
+      password: ${{ secrets.REGISTRY_TOKEN }}

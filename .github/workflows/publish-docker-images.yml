@@ -9,6 +9,11 @@ on:
       image_name:
         required: true
         type: string
+    secrets:
+      username:
+        required: true
+      password:
+        required: true
 
 jobs:
   build:
@@ -26,8 +31,8 @@ jobs:
       if: steps.changed-package.outputs.changed == 'true'
       with: 
         registry: ghcr.io
-        username: ${{ github.repository_owner }}
-        password: ${{ secrets.REGISTRY_TOKEN }}
+        username: ${{ secrets.username }}
+        password: ${{ secrets.password }}
     - uses: docker/metadata-action@v4.0.1
       if: steps.changed-package.outputs.changed == 'true'
       id: meta
