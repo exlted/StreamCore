@@ -6,7 +6,7 @@ use futures_util::StreamExt;
 use regex::Regex;
 use lazy_static::lazy_static;
 use std::collections::HashMap;
-use chat_objects::{Emote, Message};
+use streamcore_chat_objects::{Emote, Message};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {

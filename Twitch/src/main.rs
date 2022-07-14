@@ -6,7 +6,7 @@ use amiquip::{Connection, ExchangeDeclareOptions, ExchangeType, Publish};
 use tokio::{task};
 use serde_json;
 use std::env;
-use chat_objects::{Emote, Message};
+use streamcore_chat_objects::{Emote, Message};
 
 // #1 Debug sends (We shouldn't recieve our own messages, everybody should recieve the messages we send)
 
