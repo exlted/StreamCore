@@ -130,7 +130,7 @@
 			"type": "array",
 			"default": [],
 			"items":{
-                "$ref": "emote.json"
+                "$ref": "https://exlted.github.io/StreamCore/Schemas/emote.json"
 			}
 		}
 	}
