@@ -1,0 +1,127 @@
+{
+	"definitions": {},
+	"$schema": "http://json-schema.org/draft-07/schema#", 
+	"$id": "https://example.com/object1657813649.json", 
+	"title": "Root", 
+	"type": "object",
+	"required": [
+		"id",
+		"request_url",
+		"refresh_url",
+		"response_url",
+		"scope",
+		"display_info"
+	],
+	"properties": {
+		"id": {
+			"$id": "#root/id", 
+			"title": "Id", 
+			"type": "string",
+			"default": "",
+			"examples": [
+				"String"
+			],
+			"pattern": "^.*$"
+		},
+		"request_url": {
+			"$id": "#root/request_url", 
+			"title": "Request_url", 
+			"type": "string",
+			"default": "",
+			"examples": [
+				"String"
+			],
+			"pattern": "^.*$"
+		},
+		"refresh_url": {
+			"$id": "#root/refresh_url", 
+			"title": "Refresh_url", 
+			"type": "string",
+			"default": "",
+			"examples": [
+				"String"
+			],
+			"pattern": "^.*$"
+		},
+		"response_url": {
+			"$id": "#root/response_url", 
+			"title": "Response_url", 
+			"type": "string",
+			"default": "",
+			"examples": [
+				"String"
+			],
+			"pattern": "^.*$"
+		},
+		"scope": {
+			"$id": "#root/scope", 
+			"title": "Scope", 
+			"type": "array",
+			"default": [],
+			"items":{
+				"$id": "#root/scope/items", 
+				"title": "Items", 
+				"type": "string",
+				"default": "",
+				"examples": [
+					"String"
+				],
+				"pattern": "^.*$"
+			}
+		},
+		"display_info": {
+			"$id": "#root/display_info", 
+			"title": "Display_info", 
+			"type": "object",
+			"required": [
+				"connect_button"
+			],
+			"properties": {
+				"connect_button": {
+					"$id": "#root/display_info/connect_button", 
+					"title": "Connect_button", 
+					"type": "object",
+					"required": [
+						"color",
+						"name",
+						"icon"
+					],
+					"properties": {
+						"color": {
+							"$id": "#root/display_info/connect_button/color", 
+							"title": "Color", 
+							"type": "string",
+							"default": "",
+							"examples": [
+								"String"
+							],
+							"pattern": "^.*$"
+						},
+						"name": {
+							"$id": "#root/display_info/connect_button/name", 
+							"title": "Name", 
+							"type": "string",
+							"default": "",
+							"examples": [
+								"String"
+							],
+							"pattern": "^.*$"
+						},
+						"icon": {
+							"$id": "#root/display_info/connect_button/icon", 
+							"title": "Icon", 
+							"type": "string",
+							"default": "",
+							"examples": [
+								"String"
+							],
+							"pattern": "^.*$"
+						}
+					}
+				}
+
+			}
+		}
+
+	}
+}

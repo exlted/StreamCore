@@ -1,0 +1,33 @@
+{
+	"definitions": {},
+	"$schema": "http://json-schema.org/draft-07/schema#", 
+	"$id": "https://example.com/object1657812332.json", 
+	"title": "Root", 
+	"type": "object",
+	"required": [
+		"url",
+		"name"
+	],
+	"properties": {
+		"url": {
+			"$id": "#root/url", 
+			"title": "Url", 
+			"type": "string",
+			"default": "",
+			"examples": [
+				"String"
+			],
+			"pattern": "^.*$"
+		},
+		"name": {
+			"$id": "#root/name", 
+			"title": "Name", 
+			"type": "string",
+			"default": "",
+			"examples": [
+				"String"
+			],
+			"pattern": "^.*$"
+		}
+	}
+}

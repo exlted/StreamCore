@@ -1,0 +1,137 @@
+{
+	"definitions": {},
+	"$schema": "http://json-schema.org/draft-07/schema#", 
+	"$id": "https://example.com/object1657812759.json", 
+	"title": "Root", 
+	"type": "object",
+	"required": [
+		"message",
+		"raw_message",
+		"username",
+		"user_color_r",
+		"user_color_g",
+		"user_color_b",
+		"from",
+		"source_badge_large",
+		"source_badge_small",
+		"user_badges",
+		"message_emotes"
+	],
+	"properties": {
+		"message": {
+			"$id": "#root/message", 
+			"title": "Message", 
+			"type": "string",
+			"default": "",
+			"examples": [
+				"String"
+			],
+			"pattern": "^.*$"
+		},
+		"raw_message": {
+			"$id": "#root/raw_message", 
+			"title": "Raw_message", 
+			"type": "string",
+			"default": "",
+			"examples": [
+				"String"
+			],
+			"pattern": "^.*$"
+		},
+		"username": {
+			"$id": "#root/username", 
+			"title": "Username", 
+			"type": "string",
+			"default": "",
+			"examples": [
+				"String"
+			],
+			"pattern": "^.*$"
+		},
+		"user_color_r": {
+			"$id": "#root/user_color_r", 
+			"title": "User_color_r", 
+			"type": "string",
+			"default": "",
+			"examples": [
+				"String"
+			],
+			"pattern": "^.*$"
+		},
+		"user_color_g": {
+			"$id": "#root/user_color_g", 
+			"title": "User_color_g", 
+			"type": "string",
+			"default": "",
+			"examples": [
+				"String"
+			],
+			"pattern": "^.*$"
+		},
+		"user_color_b": {
+			"$id": "#root/user_color_b", 
+			"title": "User_color_b", 
+			"type": "string",
+			"default": "",
+			"examples": [
+				"String"
+			],
+			"pattern": "^.*$"
+		},
+		"from": {
+			"$id": "#root/from", 
+			"title": "From", 
+			"type": "string",
+			"default": "",
+			"examples": [
+				"String"
+			],
+			"pattern": "^.*$"
+		},
+		"source_badge_large": {
+			"$id": "#root/source_badge_large", 
+			"title": "Source_badge_large", 
+			"type": "string",
+			"default": "",
+			"examples": [
+				"String"
+			],
+			"pattern": "^.*$"
+		},
+		"source_badge_small": {
+			"$id": "#root/source_badge_small", 
+			"title": "Source_badge_small", 
+			"type": "string",
+			"default": "",
+			"examples": [
+				"String"
+			],
+			"pattern": "^.*$"
+		},
+		"user_badges": {
+			"$id": "#root/user_badges", 
+			"title": "User_badges", 
+			"type": "array",
+			"default": [],
+			"items":{
+				"$id": "#root/user_badges/items", 
+				"title": "Items", 
+				"type": "string",
+				"default": "",
+				"examples": [
+					"Strings"
+				],
+				"pattern": "^.*$"
+			}
+		},
+		"message_emotes": {
+			"$id": "#root/message_emotes", 
+			"title": "Message_emotes", 
+			"type": "array",
+			"default": [],
+			"items":{
+                "$ref": "emote.json"
+			}
+		}
+	}
+}
