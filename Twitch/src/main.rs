@@ -4,32 +4,11 @@ use twitch_irc::{ClientConfig, SecureTCPTransport};
 use twitch_irc::message::{RGBColor, ServerMessage};
 use amiquip::{Connection, ExchangeDeclareOptions, ExchangeType, Publish};
 use tokio::{task};
-use serde::{Serialize, Deserialize};
 use serde_json;
 use std::env;
+use chat_objects::{Emote, Message};
 
 // #1 Debug sends (We shouldn't recieve our own messages, everybody should recieve the messages we send)
-
-#[derive(Serialize, Deserialize)]
-struct Emote {
-    url: String,
-    name: String
-}
-
-#[derive(Serialize, Deserialize)]
-struct Message {
-    message: String,
-    raw_message: String,
-    username: String,
-    user_color_r: String,
-    user_color_g: String,
-    user_color_b: String,
-    from: String, // ID of which program generated this message
-    source_badge_large: String,
-    source_badge_small: String,
-    user_badges: Vec<String>,
-    message_emotes: Vec<Emote>
-}
 
 #[tokio::main]
 pub async fn main() {

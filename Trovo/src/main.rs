@@ -1,34 +1,12 @@
 use std::{env, error::Error};
 use trovo::{ClientId, EmoteFetchType};
 //use trovo::chat::ChatMessageType;
-use serde::{Serialize, Deserialize};
 use amiquip::{Connection, ExchangeDeclareOptions, ExchangeType, Publish};
 use futures_util::StreamExt;
 use regex::Regex;
 use lazy_static::lazy_static;
 use std::collections::HashMap;
-
-#[derive(Serialize, Deserialize)]
-struct Emote {
-    url: String,
-    name: String
-}
-
-
-#[derive(Serialize, Deserialize)]
-struct Message {
-    message: String,
-    raw_message: String,
-    username: String,
-    user_color_r: String,
-    user_color_g: String,
-    user_color_b: String,
-    from: String, // ID of which program generated this message
-    source_badge_large: String,
-    source_badge_small: String,
-    user_badges: Vec<String>,
-    message_emotes: Vec<Emote>
-}
+use chat_objects::{Emote, Message};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
