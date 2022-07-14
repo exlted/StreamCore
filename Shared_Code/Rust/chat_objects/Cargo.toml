@@ -1,8 +1,12 @@
 [package]
-name = "chat_objects"
+name = "streamcore_chat_objects"
 version = "0.1.2"
 authors = ["exlted <exltedofdrg@gmail.com>"]
 edition = "2021"
+license = "MIT"
+description = "Helper library for the StreamCore project"
+repository = "https://github.com/exlted/StreamCore"
+homepage = "https://github.com/exlted/StreamCore"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
