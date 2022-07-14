@@ -9,6 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     build-chat_objects-crate:
       uses: ./.gitub/workflows/publish-crate.yml
+      with:
         path: ./SharedCode/Rust/chat_objects
       secrets:
         cargo: ${{ secrets.CARGO_TOKEN }}
@@ -17,31 +18,31 @@ jobs:
     needs: [build-chat_objects]
     build-trovo-image:
       uses: ./.github/workflows/publish-docker-images.yml
-        with:
-          path: ./Trovo
-          image_name: ghcr.io/exlted/streamcore-chat-trovo
+      with:
+        path: ./Trovo
+        image_name: ghcr.io/exlted/streamcore-chat-trovo
 
   build-twitch:
     runs-on: ubuntu-latest
     needs: [build-chat_objects]
     build-trovo-image:
       uses: ./.github/workflows/publish-docker-images.yml
-        with:
-          path: ./Twitch
-          image_name: ghcr.io/exlted/streamcore-chat-twitch
+      with:
+        path: ./Twitch
+        image_name: ghcr.io/exlted/streamcore-chat-twitch
 
   build-youtube:
     runs-on: ubuntu-latest
     build-trovo-image:
       uses: ./.github/workflows/publish-docker-images.yml
-        with:
-          path: ./Youtube
-          image_name: ghcr.io/exlted/streamcore-chat-youtube-ingest
+      with:
+        path: ./Youtube
+        image_name: ghcr.io/exlted/streamcore-chat-youtube-ingest
 
   build-chatui:
     runs-on: ubuntu-latest
     build-trovo-image:
       uses: ./.github/workflows/publish-docker-images.yml
-        with:
-          path: ./ChatUI
-          image_name: ghcr.io/exlted/streamcore-chat-ui
+      with:
+        path: ./ChatUI
+        image_name: ghcr.io/exlted/streamcore-chat-ui

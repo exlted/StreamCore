@@ -16,6 +16,7 @@ jobs:
   
     steps:
     - uses: actions/checkout@v3
+      with:
         fetch-depth: 5
     - uses: YassinEldeeb/has-changed-path@v2.1
       id: changed-package
@@ -24,11 +25,11 @@ jobs:
     - name: Build
       if: steps.changed-package.outputs.changed == 'true'
       run: |
-      cd ${{ inputs.path }}
-      cargo build --release
+        cd ${{ inputs.path }}
+        cargo build --release
     - name: publish
       if: steps.changed-package.outputs.changed == 'true'
       run: |
-      cd ${{ inputs.path }}
-      cargo package
-      cargo publish --token ${{ secrets.cargo }}
+        cd ${{ inputs.path }}
+        cargo package
+        cargo publish --token ${{ secrets.cargo }}
