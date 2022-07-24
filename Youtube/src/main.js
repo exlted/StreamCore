@@ -52,12 +52,18 @@ amqp.connect(url).then(function(conn) {
         return ok.then(function() {
             console.log("Connected to RabbitMQ");
             yt.on('message', (data) => {
+                let text = "";
+                // Ensure we get all runs included in the message
+                data.message.runs.forEach(element => {
+                    text = text + " " + element;
+                });
+
                 var message = {
                     from: "Youtube",
                     source_badge_large: "https://www.youtube.com/s/desktop/f9ccd8c6/img/favicon_32x32.png",
                     source_badge_small: "https://www.youtube.com/s/desktop/f9ccd8c6/img/favicon.ico",
-                    message: data.message.runs[0].text,
-                    raw_message: data.message.runs[0].text,
+                    message: text,
+                    raw_message: text,
                     username: data.authorName.simpleText,
                     user_color_r: "FF",
                     user_color_g: "00",
