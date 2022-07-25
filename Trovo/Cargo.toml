@@ -7,7 +7,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-trovo = "0.4.0"
+trovo = "0.5.0"
 tokio = { version = "1.17.0", features = ["full"] }
 tokio-amqp = "1.0.0"
 amiquip = "0.4.2"
@@ -16,3 +16,4 @@ futures-util = "0.3.21"
 regex = "1"
 lazy_static = "1"
 streamcore_chat_objects = "~0"
+chrono = "0.4"

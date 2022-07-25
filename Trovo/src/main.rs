@@ -1,3 +1,4 @@
+use chrono::Utc;
 use std::{env, error::Error};
 use trovo::{ClientId, EmoteFetchType};
 //use trovo::chat::ChatMessageType;
@@ -71,8 +72,16 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     let mut messages = client.chat_messages_for_channel(&user.channel_id).await?;
     println!("listening for chat messages");
+    let mut timestamp = Utc::now(); 
     while let Some(msg) = messages.next().await {
         let msg = msg?;
+
+        if msg.send_time > timestamp {
+            timestamp = msg.send_time;
+        } else {
+            continue;
+        }
+
         // These can always be empty right now, that's okay
         let mut text = msg.content.clone();
         let badges = Vec::new();
