@@ -55,13 +55,14 @@ const chatScraper = {
                                             }
 
                                             emotes.push({
-                                                url: url,
+                                                urls: url,
                                                 name: name
                                             });
                                         }
                                     }
                                     let rawHTML = message.innerHTML;
                                     let cleaned_msg = rawHTML.replace(/<.*?shared-tooltip-text="(.*?)".*?>/gm, "$1");
+                                    cleaned_msg = rawHTML.replace(/<.*?>/gm, "");
 
                                     let data = {
                                         message: rawHTML,
