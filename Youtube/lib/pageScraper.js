@@ -55,7 +55,7 @@ const chatScraper = {
                                             }
 
                                             emotes.push({
-                                                urls: url,
+                                                urls: [url],
                                                 name: name
                                             });
                                         }
