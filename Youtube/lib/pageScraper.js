@@ -62,7 +62,7 @@ const chatScraper = {
                                     }
                                     let rawHTML = message.innerHTML;
                                     let cleaned_msg = rawHTML.replace(/<.*?shared-tooltip-text="(.*?)".*?>/gm, "$1");
-                                    cleaned_msg = rawHTML.replace(/<.*?>/gm, "");
+                                    cleaned_msg = cleaned_msg.replace(/<.*?>/gm, "");
 
                                     let data = {
                                         message: rawHTML,
