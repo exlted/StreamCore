@@ -7,7 +7,7 @@ if (location.protocol == "https:") {
   protocol = "wss://"
 }
 
-let socket = new WebSocket(protocol + location.host);
+let socket = new WebSocket(protocol + location.host + "/ws");
 socket.onopen = function(e) {
   //alert("[open] Connection established");
   //alert("Sending to server");

@@ -1,0 +1,16 @@
+[package]
+name = "chat_ui"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+warp = "0.3.2"
+streamcore_chat_objects = "~0"
+amiquip = "0.4.2"
+serde_json = "1.0.81"
+tokio = { version = "1.17.0", features = ["full"] }
+tokio-stream = "0.1.6"
+futures = { version = "0.3.17", default-features = true }
+uuid = { version = "0.4", features = ["serde", "v4"] }
