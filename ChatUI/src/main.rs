@@ -93,8 +93,14 @@ async fn main() {
             match message {
                 ConsumerMessage::Delivery(delivery) => {
                     // Pass delivery on via websockets to all members
-                    let body = std::str::from_utf8(&delivery.body).expect("Couldn't stringify body");
-                    ws::send_to_clients(body, &ampq_clients).await;
+                    {
+                        let body = std::str::from_utf8(&delivery.body).expect("Couldn't stringify body");
+                        ws::send_to_clients(body, &ampq_clients).await;
+                    }
+                    let response = consumer.ack(delivery);
+                    if response.is_err() {
+                        println!("Failed to acknowledge delivery");
+                    }
                 },
                 ConsumerMessage::ServerClosedChannel(err)
                 | ConsumerMessage::ServerClosedConnection(err) => {
