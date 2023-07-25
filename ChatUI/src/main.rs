@@ -8,7 +8,7 @@ use warp::ws::Message;
 use streamcore_message_client::client::Client as Message_Client;
 use streamcore_message_client::{
     client::{BasicConnectionCallback, BasicChannelCallback},
-    AsyncConsumer,Channel, BasicProperties, Deliver
+    AsyncConsumer,Channel, BasicProperties, Deliver, BasicAckArguments
 };
 use async_trait::async_trait;
 
@@ -51,7 +51,9 @@ impl AsyncConsumer for Consumer {
     async fn consume(&mut self, _channel: & Channel, _deliver: Deliver, _basic_properties: BasicProperties, content: Vec<u8>) {
 
         let body = std::str::from_utf8(&content).expect("Couldn't stringify body");
-
+        let mut args: BasicAckArguments = BasicAckArguments::default();
+        args.delivery_tag = _deliver.delivery_tag();
+        _channel.basic_ack(args).await.expect("Failed to ack incoming message");
         ws::send_to_clients(body, &self.clients).await;
     }
 }
