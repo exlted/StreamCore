@@ -1,13 +1,17 @@
-use std::{collections::HashMap, convert::Infallible, sync::Arc, time::Duration, thread};
+use std::{collections::HashMap, convert::Infallible, sync::Arc};
 use tokio::sync::{mpsc, Mutex};
-use tokio::task;
 use warp::{Filter, Rejection};
 mod handlers;
 mod ws;
 use std::env;
-use amiquip::{Connection, ExchangeDeclareOptions, ExchangeType, QueueDeclareOptions, FieldTable,
-              ConsumerOptions, ConsumerMessage};
 use warp::ws::Message;
+use streamcore_message_client::client::Client as Message_Client;
+use streamcore_message_client::{
+    client::{BasicConnectionCallback, BasicChannelCallback},
+    AsyncConsumer,Channel, BasicProperties, Deliver
+};
+use async_trait::async_trait;
+
 
 #[derive(Debug, Clone)]
 pub struct Client {
@@ -38,87 +42,37 @@ async fn webserver_loop(clients: ClientMap) {
     server.await;
 }
 
+struct Consumer{
+    clients: ClientMap
+}
+
+#[async_trait]
+impl AsyncConsumer for Consumer {
+    async fn consume(&mut self, _channel: & Channel, _deliver: Deliver, _basic_properties: BasicProperties, content: Vec<u8>) {
+
+        let body = std::str::from_utf8(&content).expect("Couldn't stringify body");
+
+        ws::send_to_clients(body, &self.clients).await;
+    }
+}
+
 #[tokio::main]
 async fn main() {
 
     let clients: ClientMap = Arc::new(Mutex::new(HashMap::new()));
 
-    let ampq_clients = clients.clone();
-    let local = task::LocalSet::new();
-    local.spawn_local(async move {
-        let host = env::var("AMPQ_HOST").unwrap_or("localhost".to_string());
-        let port = env::var("AMPQ_PORT").unwrap_or("5672".to_string());
-        let username = env::var("AMPQ_USERNAME").unwrap_or("guest".to_string());
-        let password = env::var("AMPQ_PASSWORD").unwrap_or("guest".to_string());
-        let exchange = env::var("EXCHANGE_NAME").unwrap_or("chat".to_string());
+    let message_client = Message_Client::new(
+        env::var("AMPQ_HOST").unwrap_or("localhost".to_string()),
+        env::var("AMPQ_PORT").unwrap_or("5672".to_string()),
+        env::var("AMPQ_USERNAME").unwrap_or("guest".to_string()),
+        env::var("AMPQ_PASSWORD").unwrap_or("guest".to_string()),
+        env::var("EXCHANGE_NAME").unwrap_or("chat".to_string()),
+        "#".to_string()
+    ).await;
 
-        let url = format!("amqp://{}:{}@{}:{}", username, password, host, port);
-
-        let mut connection: Connection;
-        //Wait to get a successful connection
-        loop {
-            let connection_attempt = Connection::insecure_open(&url);
-            if connection_attempt.is_err() {
-                thread::sleep(Duration::from_secs(5));
-                continue;
-            }
-            connection = connection_attempt.unwrap();
-            break;
-        }
-        let channel = connection.open_channel(None).unwrap();
-        let exchange = channel.exchange_declare(
-            ExchangeType::Topic,
-            exchange,
-            ExchangeDeclareOptions{
-                durable: true,
-                ..ExchangeDeclareOptions::default()
-            },
-        ).unwrap();
-
-        let queue = channel.queue_declare(
-            "",
-            QueueDeclareOptions {
-                exclusive: true,
-                ..QueueDeclareOptions::default()
-            }).expect("Failed to create Queue");
-        
-        queue.bind(&exchange, "#", FieldTable::new()).expect("Failed to bind Queue to Exchange");
-        
-        let consumer = queue.consume(ConsumerOptions {
-            no_local: true,
-            ..ConsumerOptions::default()
-        }).expect("Failed to create Consumer");
-
-        for (_i, message) in consumer.receiver().iter().enumerate() {
-            match message {
-                ConsumerMessage::Delivery(delivery) => {
-                    // Pass delivery on via websockets to all members
-                    {
-                        let body = std::str::from_utf8(&delivery.body).expect("Couldn't stringify body");
-                        ws::send_to_clients(body, &ampq_clients).await;
-                    }
-                    let response = consumer.ack(delivery);
-                    if response.is_err() {
-                        println!("Failed to acknowledge delivery");
-                    }
-                },
-                ConsumerMessage::ServerClosedChannel(err)
-                | ConsumerMessage::ServerClosedConnection(err) => {
-                    println!("{}", err.to_string());
-                    continue;
-                },
-                 ConsumerMessage::ClientCancelled
-                | ConsumerMessage::ServerCancelled
-                | ConsumerMessage::ClientClosedChannel
-                | ConsumerMessage::ClientClosedConnection => continue,
-            }
-        }
-    });
+    message_client.lock().await.open_client(BasicConnectionCallback, BasicChannelCallback).await;
+    message_client.lock().await.attach_consumer("Name".to_string(), Consumer{clients: clients.clone()}).await;
     
     let webserver_clients = clients.clone();
-    tokio::spawn(async move {
-        webserver_loop(webserver_clients).await;
-    });
-    
-    local.await;
+    webserver_loop(webserver_clients).await;
 }

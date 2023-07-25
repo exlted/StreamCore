@@ -18,7 +18,7 @@ jobs:
     secrets:
       cargo: ${{ secrets.CARGO_TOKEN }}
   build-trovo:
-    needs: [build-chat_objects]
+    needs: [build-chat_objects, build-message_client]
     uses: ./.github/workflows/publish-docker-images.yml
     with:
       path: ./Trovo
@@ -28,7 +28,7 @@ jobs:
       password: ${{ secrets.REGISTRY_TOKEN }}
 
   build-twitch:
-    needs: [build-chat_objects]
+    needs: [build-chat_objects, build-message_client]
     uses: ./.github/workflows/publish-docker-images.yml
     with:
       path: ./Twitch
@@ -47,6 +47,7 @@ jobs:
       password: ${{ secrets.REGISTRY_TOKEN }}
 
   build-chatui:
+    needs: [build-chat_objects, build-message_client]
     uses: ./.github/workflows/publish-docker-images.yml
     with:
       path: ./ChatUI

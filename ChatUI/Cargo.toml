@@ -8,9 +8,10 @@ edition = "2021"
 [dependencies]
 warp = "0.3.2"
 streamcore_chat_objects = "~0"
-amiquip = "0.4.2"
 serde_json = "1.0.81"
 tokio = { version = "1.17.0", features = ["full"] }
 tokio-stream = "0.1.6"
 futures = { version = "0.3.17", default-features = true }
 uuid = { version = "0.4", features = ["serde", "v4"] }
+streamcore_message_client = "~0"
+async-trait = "0.1.72"

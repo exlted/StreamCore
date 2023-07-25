@@ -2,35 +2,24 @@ use chrono::Utc;
 use std::{env, error::Error};
 use trovo::{ClientId, EmoteFetchType};
 //use trovo::chat::ChatMessageType;
-use amiquip::{Connection, ExchangeDeclareOptions, ExchangeType, Publish};
 use futures_util::StreamExt;
 use regex::Regex;
 use lazy_static::lazy_static;
 use std::collections::HashMap;
 use streamcore_chat_objects::{Emote, Message};
+use streamcore_message_client::client::{Client, BasicConnectionCallback, BasicChannelCallback};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
-    let host = env::var("AMPQ_HOST").unwrap_or("localhost".to_string());
-    let port = env::var("AMPQ_PORT").unwrap_or("5672".to_string());
-    let username = env::var("AMPQ_USERNAME").unwrap_or("guest".to_string());
-    let password = env::var("AMPQ_PASSWORD").unwrap_or("guest".to_string());
-    let exchange = env::var("EXCHANGE_NAME").unwrap_or("chat".to_string());
-    
-    let url = format!("amqp://{}:{}@{}:{}", username, password, host, port);
-
-    let mut connection = Connection::insecure_open(&url).unwrap();
-    let channel = connection.open_channel(None).unwrap();
-    let exchange = channel.exchange_declare(
-        ExchangeType::Topic,
-        exchange,
-        ExchangeDeclareOptions{
-            durable: true,
-            ..ExchangeDeclareOptions::default()
-        },
-    ).unwrap();
-
-    let routing_key = "trovo".to_string();
+    let message_client = Client::new(
+        env::var("AMPQ_HOST").unwrap_or("localhost".to_string()),
+        env::var("AMPQ_PORT").unwrap_or("5672".to_string()),
+        env::var("AMPQ_USERNAME").unwrap_or("guest".to_string()),
+        env::var("AMPQ_PASSWORD").unwrap_or("guest".to_string()),
+        env::var("EXCHANGE_NAME").unwrap_or("chat".to_string()),
+        "trovo".to_string()
+    ).await;
+    message_client.lock().await.open_client(BasicConnectionCallback, BasicChannelCallback).await;
 
     let client_id = env::var("CLIENT_ID").expect("missing CLIENT_ID env var");
     let username = env::var("CHANNEL_USERNAME").expect("missing CHANNEL_USERNAME env var");
@@ -127,7 +116,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         let message_json = serde_json::to_string(&message).unwrap();
 
         println!("{}", message_json);
-        exchange.publish(Publish::new(message_json.as_bytes(), routing_key.clone())).unwrap();
+        message_client.lock().await.publish_message(message_json).await;
     }
 
     Ok(())
