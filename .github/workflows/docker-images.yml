@@ -11,6 +11,12 @@ jobs:
       path: ./Shared_Code/Rust/chat_objects
     secrets:
       cargo: ${{ secrets.CARGO_TOKEN }}
+  build-message_client:
+    uses: ./.github/workflows/publish-crate.yml
+    with:
+      path: ./Shared_Code/Rust/message_client
+    secrets:
+      cargo: ${{ secrets.CARGO_TOKEN }}
   build-trovo:
     needs: [build-chat_objects]
     uses: ./.github/workflows/publish-docker-images.yml
