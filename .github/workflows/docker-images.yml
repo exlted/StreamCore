@@ -37,6 +37,16 @@ jobs:
       username: ${{ github.repository_owner }}
       password: ${{ secrets.REGISTRY_TOKEN }}
 
+  build-vstream:
+    needs: [build-chat_objects, build-message_client]
+    uses: ./.github/workflows/publish-docker-images.yml
+    with:
+      path: ./VStream
+      image_name: ghcr.io/exlted/streamcore-chat-vstream
+    secrets:
+      username: ${{ github.repository_owner }}
+      password: ${{ secrets.REGISTRY_TOKEN }}
+
   build-youtube:
     uses: ./.github/workflows/publish-docker-images.yml
     with:

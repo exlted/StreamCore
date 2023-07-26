@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="CPP_MODULE" version="4">
+  <component name="NewModuleRootManager">
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/Twitch/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/VStream/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Shared_Code/Rust/message_client/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/ChatUI/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Trovo/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Shared_Code/Rust/chat_objects/src" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/Twitch/target" />
+      <excludeFolder url="file://$MODULE_DIR$/VStream/target" />
+      <excludeFolder url="file://$MODULE_DIR$/Shared_Code/Rust/message_client/target" />
+      <excludeFolder url="file://$MODULE_DIR$/ChatUI/target" />
+      <excludeFolder url="file://$MODULE_DIR$/Trovo/target" />
+      <excludeFolder url="file://$MODULE_DIR$/Shared_Code/Rust/chat_objects/target" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+</module>

@@ -1,9 +1,15 @@
 use serde::{Serialize, Deserialize};
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Eq, Hash)]
 pub struct Emote {
     pub url: String,
     pub name: String
+}
+
+impl PartialEq for Emote {
+    fn eq(&self, other: &Self) -> bool {
+        self.name == other.name
+    }
 }
 
 #[derive(Serialize, Deserialize)]

@@ -35,3 +35,8 @@ doc/api/
 
 .flutter-plugins
 .flutter-plugins-dependencies
+
+# Jetbrains IDEs
+*.iws
+workspace.xml
+tasks.xml
