@@ -10,4 +10,4 @@ COPY --from=builder /usr/local/cargo/bin/* /
 COPY --from=builder /public/* /public/
 
 EXPOSE 8080
-CMD ["/chat_ui"]
+CMD ["/streamcore_vstream_chat_ingest"]
