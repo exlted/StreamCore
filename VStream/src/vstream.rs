@@ -239,6 +239,7 @@ async fn vstream_ingest(stream_id: String, message_client: Arc<Mutex<Client>>) {
             }
             WSMessage::Close(_) => {
                 println!("Close Message Received");
+                return;
             }
             WSMessage::Frame(_) => {
                 println!("Raw Frame Message Received");
