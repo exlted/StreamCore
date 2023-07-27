@@ -19,6 +19,7 @@ use amqprs::{
 };
 
 use amqprs::channel::ExchangeDeclareArguments;
+use tokio::time;
 
 
 pub type Result<T> = std::result::Result<T, Error>;
@@ -195,12 +196,26 @@ impl Client {
             F: ConnectionCallback + Send + 'static,
             G: ChannelCallback + Send + 'static,
     {
-        self.connection = Some(Connection::open(&OpenConnectionArguments::new(
-            &*self.host.clone(),
-            self.port.clone().parse().unwrap(),
-            &*self.username.clone(),
-            &*self.password.clone()
-        )).await.unwrap());
+        let mut attempt_cnt = 5;
+        loop {
+            let connection_attempt = Connection::open(&OpenConnectionArguments::new(
+                &*self.host.clone(),
+                self.port.clone().parse().unwrap(),
+                &*self.username.clone(),
+                &*self.password.clone()
+            )).await;
+            if connection_attempt.is_ok() {
+                self.connection = Some(connection_attempt.unwrap());
+                break;
+            } else {
+                attempt_cnt = attempt_cnt - 1;
+                if attempt_cnt <= 0 {
+                    return None;
+                }
+                let mut interval = time::interval(time::Duration::from_secs(2));
+                interval.tick().await;
+            }
+        }
 
         self.connection.as_ref()?
             .register_callback(connection_callback)
