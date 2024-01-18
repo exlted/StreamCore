@@ -1,6 +1,6 @@
 use serde::{Serialize, Deserialize};
 
-#[derive(Serialize, Deserialize, Eq, Hash)]
+#[derive(Serialize, Deserialize, Eq, Hash, Clone)]
 pub struct Emote {
     pub url: String,
     pub name: String
