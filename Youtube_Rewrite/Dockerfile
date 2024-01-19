@@ -5,7 +5,7 @@ COPY . .
 RUN cargo chef prepare --recipe-path recipe.json
 
 FROM chef AS builder
-COPY --from=planner /app/recipe.json recipe.json
+COPY --from=planner /recipe.json recipe.json
 RUN cargo chef cook --release --recipe-path recipe.json
 
 COPY . .
@@ -18,4 +18,4 @@ COPY --from=builder /target/release/* /
 COPY --from=builder /public/* /public/
 
 EXPOSE 8082
-CMD ["/streamcore_vstream_chat_ingest"]
+CMD ["/streamcore_youtube_chat_ingest"]
