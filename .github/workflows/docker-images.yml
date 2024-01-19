@@ -56,6 +56,15 @@ jobs:
       username: ${{ github.repository_owner }}
       password: ${{ secrets.REGISTRY_TOKEN }}
 
+  build-youtube-rewrite:
+    uses: ./.github/workflows/publish-docker-images.yml
+    with:
+      path: ./Youtube
+      image_name: ghcr.io/exlted/streamcore-chat-youtube-ingest-rewrite-test
+    secrets:
+      username: ${{ github.repository_owner }}
+      password: ${{ secrets.REGISTRY_TOKEN }}
+
   build-chatui:
     needs: [build-chat_objects, build-message_client]
     uses: ./.github/workflows/publish-docker-images.yml
