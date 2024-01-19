@@ -14,8 +14,8 @@ RUN cargo build --release
 # second stage.
 FROM gcr.io/distroless/cc-debian11 AS runtime
 WORKDIR /app
-COPY --from=builder /target/release/* /
-COPY --from=builder /public/* /public/
+COPY --from=builder /target/release/* /app/
+COPY --from=builder /public/* /app/public/
 
 EXPOSE 8082
-CMD ["/streamcore_youtube_chat_ingest"]
+CMD ["/app/streamcore_youtube_chat_ingest"]
