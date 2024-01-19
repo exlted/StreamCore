@@ -60,7 +60,7 @@ jobs:
     needs: [build-chat_objects, build-message_client]
     uses: ./.github/workflows/publish-docker-images.yml
     with:
-      path: ./Youtube
+      path: ./Youtube_Rewrite
       image_name: ghcr.io/exlted/streamcore-chat-youtube-ingest-rewrite-test
     secrets:
       username: ${{ github.repository_owner }}
