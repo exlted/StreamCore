@@ -12,10 +12,7 @@ COPY . .
 RUN cargo build --release
 
 # second stage.
-FROM debian:latest AS runtime
-
-RUN apt-get update && apt-get install -y apt-transport-https
-RUN apt-get update && apt-get install -y libssl && apt clean && rm -rf /var/lib/apt/lists/*
+FROM selenium/node-chrome AS runtime
 
 WORKDIR /app
 COPY --from=builder /target/release/streamcore_youtube_chat_ingest /
