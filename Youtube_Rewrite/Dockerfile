@@ -17,7 +17,7 @@ RUN ls -R
 FROM gcr.io/distroless/cc-debian11 AS runtime
 WORKDIR /app
 COPY --from=builder /app/target/release/* /
-COPY --from=builder /public/* /public/
+COPY --from=builder /app/public/* /public/
 
 EXPOSE 8082
 CMD ["/streamcore_vstream_chat_ingest"]
