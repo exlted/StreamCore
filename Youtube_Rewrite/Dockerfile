@@ -14,6 +14,7 @@ RUN cargo build --release
 # second stage.
 FROM debian:latest AS runtime
 
+RUN apt-get update && apt-get install -y apt-transport-https
 RUN apt-get update && apt-get install -y libssl && apt clean && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
