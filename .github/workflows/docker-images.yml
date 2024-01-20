@@ -48,6 +48,7 @@ jobs:
       password: ${{ secrets.REGISTRY_TOKEN }}
 
   build-youtube:
+    needs: [build-chat_objects, build-message_client]
     uses: ./.github/workflows/publish-docker-images.yml
     with:
       path: ./Youtube
