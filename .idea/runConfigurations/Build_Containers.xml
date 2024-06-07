@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Build Containers" type="CompoundRunConfigurationType">
+    <toRun name="Build Libraries" type="CompoundRunConfigurationType" />
+    <toRun name="Chat UI" type="docker-deploy" />
+    <toRun name="Trovo" type="docker-deploy" />
+    <toRun name="Twitch" type="docker-deploy" />
+    <toRun name="Youtube" type="docker-deploy" />
+    <method v="2" />
+  </configuration>
+</component>
