@@ -5,6 +5,6 @@ COPY . .
 RUN cargo install --path .
 
 # second stage.
-FROM gcr.io/distroless/cc-debian11
+FROM buildpack-deps:bookworm
 COPY --from=builder /usr/local/cargo/bin/* /
 CMD ["/streamcore_twitch_chat_ingest"]

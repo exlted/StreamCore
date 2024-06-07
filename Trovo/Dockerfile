@@ -5,6 +5,6 @@ COPY . .
 RUN cargo install --path .
 
 # second stage.
-FROM gcr.io/distroless/cc-debian11
+FROM debian:bookworm-slim
 COPY --from=builder /usr/local/cargo/bin/* /
 CMD ["/streamcore_trovo_chat_ingest"]
